@@ -1,0 +1,1 @@
+LoadBalancer using reverse proxy and Round Robin algorithm
