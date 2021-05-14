@@ -6,7 +6,8 @@
     "configurations": [
         {
             "env": {
-                    
+                "APP_PORT" : "9090",
+                "SERVER_LIST": "http://localhost:8081,http://localhost:8082,http://localhost:8083,http://localhost:8084,http://localhost:8080"
             },
             "name": "Launch Package",
             "type": "go",

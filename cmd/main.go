@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -10,6 +9,7 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/luckyshmo/load-balancer/config"
 	"github.com/luckyshmo/load-balancer/models"
 	"github.com/luckyshmo/load-balancer/pkg/handler"
 	"github.com/luckyshmo/load-balancer/pkg/service"
@@ -18,14 +18,10 @@ import (
 var serverPool models.ServerPool
 
 func main() {
-	var serverList string
-	var port int
-	// flag.StringVar(&serverList, "backends", "", "Load balanced backends, use commas to separate")
-	// flag.IntVar(&port, "port", 3030, "Port to serve")
-	// flag.Parse()
 
-	port = 9090
-	serverList = "http://localhost:8081,http://localhost:8082,http://localhost:8083,http://localhost:8084,http://localhost:8080"
+	cfg := config.Get()
+
+	serverList := cfg.ServerList
 
 	if len(serverList) == 0 {
 		log.Fatal("Please provide one or more backends to load balance")
@@ -51,13 +47,13 @@ func main() {
 
 	// create http server
 	server := http.Server{
-		Addr:    fmt.Sprintf(":%d", port),
+		Addr:    ":" + cfg.AppPort,
 		Handler: http.HandlerFunc(serverHandler.LoadBalancingProxy),
 	}
 
 	go service.HealthCheck(serverPool)
 
-	log.Printf("Load Balancer started at :%d\n", port)
+	log.Printf("Load Balancer started at :%s\n", cfg.AppPort)
 	if err := server.ListenAndServe(); err != nil {
 		log.Fatal(err)
 	}
