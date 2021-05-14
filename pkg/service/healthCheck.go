@@ -7,7 +7,7 @@ import (
 	"github.com/luckyshmo/load-balancer/models"
 )
 
-// healthCheck runs a routine for check status of the backends every 2 mins
+// healthCheck проверяем доступность бэкендов каждые 10 секунд
 func HealthCheck(serverPool models.ServerPool) {
 	t := time.NewTicker(time.Second * 10)
 	for {

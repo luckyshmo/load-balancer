@@ -23,12 +23,10 @@ func (h *ServerPoolHandler) GetProxy(serverUrl *url.URL) *httputil.ReverseProxy 
 			return
 		}
 
-		// after 3 retries, mark this backend as down
+		// считаем, что бэкенд мертв в случае 3 неудачных попыток
 		h.ServerPool.MarkBackendStatus(serverUrl, false)
 
-		// if the same request routing for few attempts with different backends, increase the count
 		attempts := h.getAttemptsFromContext(request)
-		log.Printf("%s(%s) Attempting retry %d\n", request.RemoteAddr, request.URL.Path, attempts)
 		ctx := context.WithValue(request.Context(), Attempts, attempts+1)
 		h.LoadBalancingProxy(writer, request.WithContext(ctx))
 	}

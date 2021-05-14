@@ -22,12 +22,15 @@ func main() {
 	port := os.Getenv("APP_PORT")
 
 	if len(serverList) == 0 {
-		log.Fatal("Please provide one or more backends to load balance")
+		log.Fatal("Нужен хотя бы один бэкенд для балансировки")
+	}
+	if len(port) == 0 {
+		port = "9090" //используем стандартный порт
 	}
 
 	serverHandler := handler.NewServerHandler(&serverPool)
 
-	// parse servers
+	// Парсинг серверов из перемнной окружения
 	tokens := strings.Split(serverList, ",")
 	for _, tok := range tokens {
 		serverUrl, err := url.Parse(tok)
@@ -43,7 +46,6 @@ func main() {
 		log.Printf("Configured server: %s\n", serverUrl)
 	}
 
-	// create http server
 	server := http.Server{
 		Addr:    ":" + port,
 		Handler: http.HandlerFunc(serverHandler.LoadBalancingProxy),
@@ -57,7 +59,6 @@ func main() {
 	}
 
 	quit := make(chan os.Signal, 1)
-	//if app get SIGTERM it will exit
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
 	<-quit
 

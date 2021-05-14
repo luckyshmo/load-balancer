@@ -23,7 +23,6 @@ const (
 	Retry
 )
 
-// GetAttemptsFromContext returns the attempts for request
 func (h *ServerPoolHandler) getAttemptsFromContext(r *http.Request) int {
 	if attempts, ok := r.Context().Value(Attempts).(int); ok {
 		return attempts
@@ -31,7 +30,6 @@ func (h *ServerPoolHandler) getAttemptsFromContext(r *http.Request) int {
 	return 1
 }
 
-// GetAttemptsFromContext returns the attempts for request
 func (h *ServerPoolHandler) getRetryFromContext(r *http.Request) int {
 	if retry, ok := r.Context().Value(Retry).(int); ok {
 		return retry
@@ -39,7 +37,7 @@ func (h *ServerPoolHandler) getRetryFromContext(r *http.Request) int {
 	return 0
 }
 
-// loadBalancingProxy load balances the incoming request
+// loadBalancingProxy основная функция баланисровки пакетов
 func (h *ServerPoolHandler) LoadBalancingProxy(w http.ResponseWriter, r *http.Request) {
 	attempts := h.getAttemptsFromContext(r)
 	if attempts > 3 {
